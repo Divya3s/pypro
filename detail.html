@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IssueDesk | Report details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f6f7fb; }
+    .navbar-brand span, .section-title span { color: #4f46e5; }
+    .page-hero { background: linear-gradient(135deg, #4f46e5, #06b6d4); color: #fff; }
+    .card { border: 0; box-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.08); }
+    .required::after { content: " *"; color: #dc3545; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html"><span>Issue</span>Desk</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">New report</a></li>
+          <li class="nav-item"><a class="nav-link" href="bugs.html">Bugs</a></li>
+          <li class="nav-item"><a class="nav-link" href="features.html">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="documentation.html">Documentation</a></li>
+          <li class="nav-item"><a class="nav-link" href="improvements.html">Improvements</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-hero py-5">
+    <div class="container py-3">
+      <span class="badge text-bg-light text-primary mb-3" id="titleBadge">Report details</span>
+      <h1 class="display-6 fw-bold">View and manage report details</h1>
+      <p class="lead mb-0">Update fields, add comments, or delete a bug, feature, documentation item, or improvement.</p>
+    </div>
+  </header>
+
+  <main class="container my-5">
+    <div id="statusMessage" class="alert alert-info">Loading report...</div>
+    <div class="row g-4">
+      <section class="col-lg-8">
+        <div class="card">
+          <div class="card-body p-4 p-lg-5">
+            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+              <h2 class="section-title h3 mb-0">Report <span>CRUD</span></h2>
+              <button class="btn btn-outline-danger" type="button" id="deleteButton">Delete report</button>
+            </div>
+            <form id="detailForm" class="needs-validation" novalidate>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label required" for="report_type">Report type</label>
+                  <select class="form-select" id="report_type" required>
+                    <option>Bug</option>
+                    <option>Feature Request</option>
+                    <option>Improvement</option>
+                    <option>Documentation</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required" for="priority">Priority</label>
+                  <select class="form-select" id="priority" required>
+                    <option>Critical</option>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="status">Status</label>
+                  <select class="form-select" id="status">
+                    <option>New</option>
+                    <option>Triaging</option>
+                    <option>Planned</option>
+                    <option>In progress</option>
+                    <option>Resolved</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label required" for="title">Title</label>
+                  <input class="form-control" id="title" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required" for="reporter_name">Reporter</label>
+                  <input class="form-control" id="reporter_name" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required" for="reporter_email">Reporter email</label>
+                  <input class="form-control" id="reporter_email" type="email" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required" for="product_area">Product area</label>
+                  <input class="form-control" id="product_area" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="version_build">Version / build</label>
+                  <input class="form-control" id="version_build">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="environment_name">Environment</label>
+                  <input class="form-control" id="environment_name">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="severity">Severity</label>
+                  <input class="form-control" id="severity">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="requested_resolution_date">Requested resolution date</label>
+                  <input class="form-control" id="requested_resolution_date" type="date">
+                </div>
+                <div class="col-12">
+                  <label class="form-label required" for="description">Description</label>
+                  <textarea class="form-control" id="description" rows="4" required></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="steps_to_reproduce">Steps to reproduce / user flow</label>
+                  <textarea class="form-control" id="steps_to_reproduce" rows="4"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="acceptance_criteria">Acceptance criteria</label>
+                  <textarea class="form-control" id="acceptance_criteria" rows="4"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="actual_result">Actual result</label>
+                  <textarea class="form-control" id="actual_result" rows="3"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="business_impact">Business impact</label>
+                  <textarea class="form-control" id="business_impact" rows="3"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="assignee">Assignee</label>
+                  <input class="form-control" id="assignee">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="labels">Labels</label>
+                  <input class="form-control" id="labels">
+                </div>
+              </div>
+              <div class="d-flex justify-content-end mt-4">
+                <button class="btn btn-primary" type="submit">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <aside class="col-lg-4">
+        <div class="card">
+          <div class="card-body p-4">
+            <h2 class="h5 mb-3">Comments</h2>
+            <div id="commentsList" class="mb-4"></div>
+            <form id="commentForm">
+              <div class="mb-3">
+                <label class="form-label" for="comment_author">Author</label>
+                <input class="form-control" id="comment_author" placeholder="Your name">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="comment_email">Email</label>
+                <input class="form-control" id="comment_email" type="email" placeholder="you@example.com">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="comment_body">Comment</label>
+                <textarea class="form-control" id="comment_body" rows="4" placeholder="Add a status update or question."></textarea>
+              </div>
+              <button class="btn btn-outline-primary w-100" type="submit">Add comment</button>
+            </form>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="scripts/detail-page.js"></script>
+</body>
+</html>

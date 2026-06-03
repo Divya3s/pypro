@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IssueDesk | Bug & Feature Report System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <style>
+    :root {
+      --brand: #4f46e5;
+      --brand-dark: #3730a3;
+      --soft-bg: #f6f7fb;
+    }
+
+    body {
+      background: var(--soft-bg);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--brand), #06b6d4);
+      color: #fff;
+    }
+
+    .navbar-brand span,
+    .section-title span {
+      color: var(--brand);
+    }
+
+    .card {
+      border: 0;
+      box-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.08);
+    }
+
+    .required::after {
+      content: " *";
+      color: #dc3545;
+      font-weight: 700;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 0.45rem;
+      top: 0.35rem;
+      bottom: 0.35rem;
+      width: 2px;
+      background: #dee2e6;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -0.02rem;
+      top: 0.35rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 999px;
+      background: var(--brand);
+      box-shadow: 0 0 0 0.25rem #eef2ff;
+    }
+
+    .preview-box {
+      min-height: 16rem;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation keeps primary actions visible for reporters, triage leads, and product managers. -->
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#"><span>Issue</span>Desk</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="#report-form">New report</a></li>
+          <li class="nav-item"><a class="nav-link" href="bugs.html">Bugs</a></li>
+          <li class="nav-item"><a class="nav-link" href="features.html">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="documentation.html">Documentation</a></li>
+          <li class="nav-item"><a class="nav-link" href="improvements.html">Improvements</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero py-5">
+    <div class="container py-4">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="badge text-bg-light text-primary mb-3">Bug & Feature Intake</span>
+          <h1 class="display-5 fw-bold">Capture reproducible bugs and actionable feature requests.</h1>
+          <p class="lead mb-0">A Bootstrap report system backed by a core Python API and SQLite storage for structured triage metadata, stakeholder context, and follow-up comments.</p>
+        </div>
+        <div class="col-lg-5">
+          <div class="card text-dark">
+            <div class="card-body p-4">
+              <h2 class="h5 mb-3">Queue snapshot</h2>
+              <div class="row text-center g-3">
+                <div class="col-4">
+                  <div class="h3 fw-bold text-danger mb-0">12</div>
+                  <small class="text-muted">Critical bugs</small>
+                </div>
+                <div class="col-4">
+                  <div class="h3 fw-bold text-primary mb-0">28</div>
+                  <small class="text-muted">Feature ideas</small>
+                </div>
+                <div class="col-4">
+                  <div class="h3 fw-bold text-success mb-0">84%</div>
+                  <small class="text-muted">SLA met</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container my-5">
+    <div class="row g-4">
+      <section class="col-lg-8" id="report-form">
+        <div class="card">
+          <div class="card-body p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+              <div>
+                <p class="text-uppercase text-primary fw-semibold small mb-1">Create report</p>
+                <h2 class="section-title h3 mb-0">Submit a <span>bug or feature</span></h2>
+              </div>
+              <span class="badge rounded-pill text-bg-primary align-self-start">Draft #ISS-1042</span>
+            </div>
+
+            <!-- Report basics identify the work item and make it easy to route. -->
+            <form class="needs-validation" id="issueForm" novalidate>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="reportType" class="form-label required">Report type</label>
+                  <select class="form-select" id="reportType" required>
+                    <option value="" selected disabled>Choose type</option>
+                    <option>Bug</option>
+                    <option>Feature Request</option>
+                    <option>Improvement</option>
+                    <option>Documentation</option>
+                  </select>
+                  <div class="invalid-feedback">Select a report type.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="priority" class="form-label required">Priority</label>
+                  <select class="form-select" id="priority" required>
+                    <option value="" selected disabled>Choose priority</option>
+                    <option>Critical</option>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                  <div class="invalid-feedback">Select a priority.</div>
+                </div>
+                <div class="col-12">
+                  <label for="title" class="form-label required">Title</label>
+                  <input type="text" class="form-control" id="title" placeholder="Example: Checkout fails when coupon code is removed" required>
+                  <div class="invalid-feedback">Provide a short title.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="reporter" class="form-label required">Reporter</label>
+                  <input type="text" class="form-control" id="reporter" placeholder="Your name or team" required>
+                  <div class="invalid-feedback">Add the reporter name.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label required">Contact email</label>
+                  <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                  <div class="invalid-feedback">Enter a valid email.</div>
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <!-- Technical context helps engineers reproduce bugs and evaluate feasibility. -->
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label for="productArea" class="form-label required">Product area</label>
+                  <input type="text" class="form-control" id="productArea" placeholder="Billing, API, Mobile" required>
+                  <div class="invalid-feedback">Add a product area.</div>
+                </div>
+                <div class="col-md-4">
+                  <label for="version" class="form-label">Version / build</label>
+                  <input type="text" class="form-control" id="version" placeholder="v2.8.1">
+                </div>
+                <div class="col-md-4">
+                  <label for="environment" class="form-label">Environment</label>
+                  <select class="form-select" id="environment">
+                    <option>Production</option>
+                    <option>Staging</option>
+                    <option>Development</option>
+                    <option>Local</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="severity" class="form-label">Severity</label>
+                  <select class="form-select" id="severity">
+                    <option>Blocks all users</option>
+                    <option>Blocks some users</option>
+                    <option>Degrades experience</option>
+                    <option>Cosmetic / minor</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="dueDate" class="form-label">Requested resolution date</label>
+                  <input type="date" class="form-control" id="dueDate">
+                </div>
+                <div class="col-12">
+                  <label for="description" class="form-label required">Description</label>
+                  <textarea class="form-control" id="description" rows="4" placeholder="Summarize the problem, user need, or business opportunity." required></textarea>
+                  <div class="invalid-feedback">Add a description.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="steps" class="form-label">Steps to reproduce / user flow</label>
+                  <textarea class="form-control" id="steps" rows="5" placeholder="1. Open checkout&#10;2. Apply coupon&#10;3. Remove coupon"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label for="acceptance" class="form-label">Expected result / acceptance criteria</label>
+                  <textarea class="form-control" id="acceptance" rows="5" placeholder="Describe the expected behavior or measurable feature outcome."></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label for="actual" class="form-label">Actual result</label>
+                  <textarea class="form-control" id="actual" rows="3" placeholder="What happened instead?"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label for="impact" class="form-label">Customer / business impact</label>
+                  <textarea class="form-control" id="impact" rows="3" placeholder="Affected customers, revenue risk, retention impact, or strategic value."></textarea>
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <!-- Triage fields can be updated by the owner after submission. -->
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label for="assignee" class="form-label">Assignee</label>
+                  <input type="text" class="form-control" id="assignee" placeholder="Engineering owner">
+                </div>
+                <div class="col-md-4">
+                  <label for="status" class="form-label">Status</label>
+                  <select class="form-select" id="status">
+                    <option>New</option>
+                    <option>Triaging</option>
+                    <option>Planned</option>
+                    <option>In progress</option>
+                    <option>Resolved</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="labels" class="form-label">Labels</label>
+                  <input type="text" class="form-control" id="labels" placeholder="frontend, regression, ux">
+                </div>
+                <div class="col-12">
+                  <label for="attachments" class="form-label">Attachments</label>
+                  <input class="form-control" type="file" id="attachments" multiple>
+                  <div class="form-text">Add screenshots, logs, screen recordings, mockups, or customer examples.</div>
+                </div>
+              </div>
+
+              <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-4">
+                <button type="reset" class="btn btn-outline-secondary">Clear form</button>
+                <button type="submit" class="btn btn-primary">Submit report</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <aside class="col-lg-4" id="report-details">
+        <div class="card mb-4">
+          <div class="card-body p-4">
+            <h2 class="h5 mb-3">Live report preview</h2>
+            <div class="preview-box border rounded-3 p-3" id="preview">
+              <p class="text-muted mb-0">Complete the form to preview the report summary here.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-body p-4">
+            <h2 class="h5 mb-3">Required details checklist</h2>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item px-0 d-flex justify-content-between"><span>Clear title</span><span class="badge text-bg-success">Required</span></li>
+              <li class="list-group-item px-0 d-flex justify-content-between"><span>Priority and severity</span><span class="badge text-bg-success">Required</span></li>
+              <li class="list-group-item px-0 d-flex justify-content-between"><span>Reproduction steps</span><span class="badge text-bg-warning">Recommended</span></li>
+              <li class="list-group-item px-0 d-flex justify-content-between"><span>Expected vs actual</span><span class="badge text-bg-warning">Recommended</span></li>
+              <li class="list-group-item px-0 d-flex justify-content-between"><span>Impact statement</span><span class="badge text-bg-info">Helpful</span></li>
+              <li class="list-group-item px-0 d-flex justify-content-between"><span>Files or links</span><span class="badge text-bg-info">Helpful</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body p-4">
+            <h2 class="h5 mb-3">SQLite backend</h2>
+            <p class="small text-muted">Run the included core Python backend to save reports and comments into the local SQLite database.</p>
+            <div class="d-grid gap-2">
+              <a class="btn btn-primary btn-sm" href="/download/issuedesk-files.zip" download>Download all files</a>
+              <a class="btn btn-outline-primary btn-sm" href="database/issuedesk.sqlite" download>Download issuedesk.sqlite</a>
+              <a class="btn btn-outline-secondary btn-sm" href="database/schema.sql" download>Download SQLite schema</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="row mt-4" id="comments">
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body p-4 p-lg-5">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+              <div>
+                <p class="text-uppercase text-primary fw-semibold small mb-1">Collaboration</p>
+                <h2 class="h4 mb-0">Comments and activity</h2>
+              </div>
+              <span class="badge text-bg-light">3 updates</span>
+            </div>
+
+            <!-- Comment thread records investigation notes, product decisions, and customer follow-ups. -->
+            <div class="timeline" id="commentThread">
+              <article class="timeline-item">
+                <div class="bg-light rounded-3 p-3">
+                  <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <strong>Priya Shah</strong>
+                    <small class="text-muted">Today, 09:15</small>
+                  </div>
+                  <p class="mb-0 mt-2">Marked as high priority because two enterprise customers reported checkout failures after the latest release.</p>
+                </div>
+              </article>
+              <article class="timeline-item">
+                <div class="bg-light rounded-3 p-3">
+                  <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <strong>Marco Lee</strong>
+                    <small class="text-muted">Today, 10:05</small>
+                  </div>
+                  <p class="mb-0 mt-2">Engineering can reproduce in staging. Logs show a null coupon reference after the removal action.</p>
+                </div>
+              </article>
+              <article class="timeline-item">
+                <div class="bg-light rounded-3 p-3">
+                  <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <strong>Ava Kim</strong>
+                    <small class="text-muted">Today, 11:30</small>
+                  </div>
+                  <p class="mb-0 mt-2">Product approved a hotfix. Please add a regression test before closing.</p>
+                </div>
+              </article>
+            </div>
+
+            <form id="commentForm" class="mt-4">
+              <label for="newComment" class="form-label">Add comment</label>
+              <textarea class="form-control" id="newComment" rows="3" placeholder="Ask a question, add evidence, or post a status update."></textarea>
+              <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-outline-primary" type="submit">Post comment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-4 text-center text-muted">
+    <div class="container small">IssueDesk template &copy; 2026. Customize statuses, labels, and workflows for your team.</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const issueForm = document.getElementById('issueForm');
+    const preview = document.getElementById('preview');
+    const commentForm = document.getElementById('commentForm');
+    const commentThread = document.getElementById('commentThread');
+    let currentReportId = null;
+
+    const fieldValue = (id, fallback = 'Not provided') => {
+      const field = document.getElementById(id);
+      return field && field.value.trim() ? field.value.trim() : fallback;
+    };
+
+    const escapeHtml = (value) => value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('\"', '&quot;')
+      .replaceAll("'", '&#039;');
+
+    const updatePreview = () => {
+      const title = escapeHtml(fieldValue('title', 'Untitled report'));
+      const type = escapeHtml(fieldValue('reportType', 'Type pending'));
+      const priority = escapeHtml(fieldValue('priority', 'Priority pending'));
+      const status = escapeHtml(fieldValue('status', 'New'));
+      const description = escapeHtml(fieldValue('description', 'No description added yet.'));
+      const productArea = escapeHtml(fieldValue('productArea', 'Area pending'));
+      const assignee = escapeHtml(fieldValue('assignee', 'Unassigned'));
+
+      preview.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+          <h3 class="h6 mb-0">${title}</h3>
+          <span class="badge text-bg-primary">${type}</span>
+        </div>
+        <p class="small text-muted mb-3">${description}</p>
+        <dl class="row small mb-0">
+          <dt class="col-5">Priority</dt><dd class="col-7">${priority}</dd>
+          <dt class="col-5">Status</dt><dd class="col-7">${status}</dd>
+          <dt class="col-5">Area</dt><dd class="col-7">${productArea}</dd>
+          <dt class="col-5">Assignee</dt><dd class="col-7">${assignee}</dd>
+        </dl>
+      `;
+    };
+
+    issueForm.addEventListener('input', updatePreview);
+    issueForm.addEventListener('change', updatePreview);
+    const reportPayload = () => ({
+      report_type: fieldValue('reportType', ''),
+      priority: fieldValue('priority', ''),
+      title: fieldValue('title', ''),
+      reporter_name: fieldValue('reporter', ''),
+      reporter_email: fieldValue('email', ''),
+      product_area: fieldValue('productArea', ''),
+      version_build: fieldValue('version', ''),
+      environment_name: fieldValue('environment', ''),
+      severity: fieldValue('severity', ''),
+      requested_resolution_date: fieldValue('dueDate', ''),
+      description: fieldValue('description', ''),
+      steps_to_reproduce: fieldValue('steps', ''),
+      acceptance_criteria: fieldValue('acceptance', ''),
+      actual_result: fieldValue('actual', ''),
+      business_impact: fieldValue('impact', ''),
+      assignee: fieldValue('assignee', ''),
+      status: fieldValue('status', 'New'),
+      labels: fieldValue('labels', '')
+    });
+
+    issueForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!issueForm.checkValidity()) {
+        issueForm.classList.add('was-validated');
+        return;
+      }
+
+      const submitButton = issueForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Saving...';
+
+      try {
+        const response = await fetch('/api/reports', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reportPayload())
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to save report.');
+        }
+
+        currentReportId = data.report.id;
+        updatePreview();
+        submitButton.textContent = `Report #${currentReportId} saved`;
+        setTimeout(() => { window.location.href = `detail.html?id=${currentReportId}`; }, 800);
+        submitButton.classList.remove('btn-primary');
+        submitButton.classList.add('btn-success');
+      } catch (error) {
+        submitButton.textContent = 'Save failed';
+        submitButton.classList.remove('btn-primary');
+        submitButton.classList.add('btn-danger');
+        alert(`${error.message} Start the backend with: python3 app.py`);
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    issueForm.addEventListener('reset', () => {
+      issueForm.classList.remove('was-validated');
+      setTimeout(() => {
+        preview.innerHTML = '<p class="text-muted mb-0">Complete the form to preview the report summary here.</p>';
+        const submitButton = issueForm.querySelector('button[type="submit"]');
+        submitButton.textContent = 'Submit report';
+        currentReportId = null;
+        submitButton.classList.add('btn-primary');
+        submitButton.classList.remove('btn-success', 'btn-danger');
+      }, 0);
+    });
+
+    const appendComment = (author, timestamp, comment) => {
+      const item = document.createElement('article');
+      item.className = 'timeline-item';
+      item.innerHTML = `
+        <div class="bg-light rounded-3 p-3">
+          <div class="d-flex justify-content-between flex-wrap gap-2">
+            <strong></strong>
+            <small class="text-muted"></small>
+          </div>
+          <p class="mb-0 mt-2"></p>
+        </div>
+      `;
+      item.querySelector('strong').textContent = author;
+      item.querySelector('small').textContent = timestamp;
+      item.querySelector('p').textContent = comment;
+      commentThread.appendChild(item);
+    };
+
+    commentForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const commentField = document.getElementById('newComment');
+      const comment = commentField.value.trim();
+
+      if (!comment) {
+        commentField.focus();
+        return;
+      }
+
+      if (!currentReportId) {
+        alert('Save the report before adding backend comments.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            report_id: currentReportId,
+            author_name: fieldValue('reporter', 'You'),
+            author_email: fieldValue('email', ''),
+            comment_body: comment
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to save comment.');
+        }
+        appendComment(data.comment.author_name, 'Just now', data.comment.comment_body);
+        commentField.value = '';
+      } catch (error) {
+        alert(`${error.message} Start the backend with: python3 app.py`);
+      }
+    });
+  </script>
+</body>
+</html>
